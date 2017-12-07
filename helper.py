@@ -1,6 +1,8 @@
 import random
 import math
 from operator import itemgetter
+from PIL import Image
+
 
 def crop(img):
     width, height = img.size
@@ -12,11 +14,6 @@ def crop(img):
 
     return [img1, img2, img3, img4]
 
-    #img1.save("1.jpg")
-    #img2.save("2.jpg")
-    #img3.save("3.jpg")
-    #img4.save("4.jpg")
-
 
 def rotate_shuffle(pieces):
     #rotate randomly
@@ -26,10 +23,27 @@ def rotate_shuffle(pieces):
         random.shuffle(pieces)
 
 
+def generate_pieces(img):
+    pieces = crop(img) # crop and divide the image into 4 pieces
+    rotate_shuffle(pieces) # rotate the pieces and shuffle the order randomly
+
+    for index in range(len(pieces)):
+        pieces[index].save("pieces/piece_"+str(index)+".jpg") # save each piece as an image file
+
+
+def load_pieces():
+    pieces = []
+    for index in range(0, 4):
+        pieces.append(Image.open("pieces/piece_"+str(index)+".jpg"))
+    return pieces
+
+
 def get_distance_between (edge1, edge2):
+
     if len(edge1) != len(edge2):
         print("[Error] lengths of the edges are not equal")
     distance = 0
+
     for index in range(len(edge1)):
         distance += math.sqrt( (edge1[index][0] - edge2[index][0]) ** 2 +
                                (edge1[index][1] - edge2[index][1]) ** 2 +
@@ -40,14 +54,19 @@ def get_distance_between (edge1, edge2):
 
 def get_optimal_pairs(n, np_pieces): # for the chosen piece
     collection_of_sorted_distances = []
+
     for i in range(len(np_pieces)): # for each edge of the chosen piece
         collection_of_distances = []
+
         for j in range(len(np_pieces)): # compare it with edges of some other piece
+
             if n == j:
                 continue
+
             for k in range(len(np_pieces)): #with the edge k of some other piece j
                 distance = get_distance_between(np_pieces[n].get_edge(i), np_pieces[j].get_edge(k))
                 collection_of_distances.append((j, k, distance)) # piece j, edge k, distance value
+
         sorted_distances = sorted(collection_of_distances, key=itemgetter(2))
         collection_of_sorted_distances.append(sorted_distances) # sort the pairs in accordance with the distance and add it to the list
 

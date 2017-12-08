@@ -1,8 +1,8 @@
 import random
 import math
+from node import Node
 from operator import itemgetter
 from PIL import Image
-
 
 def crop(img):
     width, height = img.size
@@ -44,30 +44,108 @@ def get_distance_between (edge1, edge2):
         print("[Error] lengths of the edges are not equal")
     distance = 0
 
-    for index in range(len(edge1)):
-        distance += math.sqrt( (edge1[index][0] - edge2[index][0]) ** 2 +
-                               (edge1[index][1] - edge2[index][1]) ** 2 +
-                               (edge1[index][2] - edge2[index][2]) ** 2 )
+    length = len(edge1)
+    for index in range(length):
+        distance += math.sqrt( (edge1[index][0] - edge2[length-index-1][0]) ** 2 +
+                               (edge1[index][1] - edge2[length-index-1][1]) ** 2 +
+                               (edge1[index][2] - edge2[length-index-1][2]) ** 2 )
 
-    return distance
+    return round(distance,2)
 
 
-def get_optimal_pairs(n, np_pieces): # for the chosen piece
-    collection_of_sorted_distances = []
-
+def get_distances(n, np_pieces): # for the chosen piece
+    collection_of_distances = []
     for i in range(len(np_pieces)): # for each edge of the chosen piece
-        collection_of_distances = []
 
         for j in range(len(np_pieces)): # compare it with edges of some other piece
 
             if n == j:
                 continue
 
-            for k in range(len(np_pieces)): #with the edge k of some other piece j
+            for k in range(len(np_pieces)): # with the edge k of some other piece j
                 distance = get_distance_between(np_pieces[n].get_edge(i), np_pieces[j].get_edge(k))
-                collection_of_distances.append((j, k, distance)) # piece j, edge k, distance value
+                collection_of_distances.append((n, i, j, k, distance)) # piece j, edge k, distance value
 
-        sorted_distances = sorted(collection_of_distances, key=itemgetter(2))
-        collection_of_sorted_distances.append(sorted_distances) # sort the pairs in accordance with the distance and add it to the list
+    return collection_of_distances
 
-    return collection_of_sorted_distances
+
+def get_all_sorted_distances(np_pieces):
+
+    distances_all = []
+    for i in range(len(np_pieces)):
+        distances = get_distances(i, np_pieces) # for piece i
+        # distances_all.append(distances)
+        for distance in distances:
+            if (distance[2], distance[3], distance[0], distance[1], distance[4]) not in distances_all:
+                distances_all.append(distance)
+
+    distances_all = sorted(distances_all, key=itemgetter(4))
+
+    return distances_all
+
+
+def solve(piece_objects, all_sorted_distances):
+    solution = []
+    pieces_used = []
+    index = 0
+    found_first_two = False
+    while len(solution) < 3 and index < len(all_sorted_distances):
+        pair = all_sorted_distances[index]
+        index += 1
+
+        piece1 = piece_objects[pair[0]]
+        piece2 = piece_objects[pair[2]]
+        if piece1.is_connected(pair[1]) or piece1.is_connected((pair[1]+4)%4) or piece2.is_connected(pair[3]) or piece2.is_connected((pair[3]+4)%4):
+            continue
+
+        if not found_first_two or (pair[0] in pieces_used) is (pair[2] not in pieces_used):
+            piece_objects[pair[0]].set_connected_true(pair[1])
+            piece_objects[pair[2]].set_connected_true(pair[3])
+            pieces_used.append(pair[0])
+            pieces_used.append(pair[2])
+            solution.append((pair[0], pair[1], pair[2], pair[3]))
+            found_first_two = True
+    return solution
+
+
+def merge_pieces(final_pieces):
+    width, height = final_pieces[0].size
+    final_image = Image.new('RGB', (width*2, height*2))
+    final_image.paste(final_pieces[0],(0, 0))
+    final_image.paste(final_pieces[1], (width, 0))
+    final_image.paste(final_pieces[2], (0, height))
+    final_image.paste(final_pieces[3], (width, height))
+    final_image.save("results/final_img.jpg")
+
+
+def combine(pieces, solution):
+
+    linked_list = list()
+
+    for i in range(4):
+        linked_list.append(Node())
+
+    for pair in solution:
+        linked_list[pair[0]].set_connection(pair[1], pair[2])
+        linked_list[pair[2]].set_connection(pair[3], pair[0])
+
+    print(linked_list[1].print_node())
+    '''
+    piece1_index = solution[0][0]
+    piece1_angle = solution[0][1]
+    piece2_index = solution[0][2]
+    piece2_angle = solution[0][3]
+    piece3_index = solution[0][0]
+    piece3_angle = solution[0][1]
+    piece4_index = solution[0][2]
+    piece4_angle = solution[0][3]
+
+    piece1 = pieces[piece1_index].rotate((1-piece1_angle)*270)
+    piece2 = pieces[piece2_index].rotate((3-piece2_angle)*270)
+    piece3 = []
+    piece4 = []
+
+
+    final_pieces = [piece1, piece2, piece3, piece4]
+    merge_pieces(final_pieces)
+    '''

@@ -9,9 +9,9 @@ n = 0
 
 while n != 1 and n != 2 :
     print("1. Generate pieces, then load pieces")
-    print("2. Load pieces that are already generated")
-    n = int(input())
-
+    print("2. Load pieces that are already generated (Recommended for quick look-through)")
+    n = int(input("Enter option: "))
+    print("\n")
 if n == 1:
     helper.generate_pieces(img) # crops and shuffles the pieces randomly
 
@@ -39,8 +39,17 @@ for index in range(len(pieces)):
 all_sorted_distances = helper.get_all_sorted_distances(piece_objects)
 solution = helper.solve(piece_objects, all_sorted_distances)
 
+print("LIST OF ALL SORTED DISTANCES (Square #, Edge #, Square #, Edge #, Distance Value) : ")
 print(all_sorted_distances)
+print("\n")
+print("Total number of edges compared: ")
 print(len(all_sorted_distances))
+print("\n")
+print("Final Solution: ")
 print(solution)
-
+print("\n")
+print("(S1, E1, S2, E2) Edge E1 of Square S1 is connected with Edge E2 of Square S2")
+print("Edge(0, 1, 2, 3) => Edge(North, East, South, West)")
+print("\n")
 helper.combine(pieces, solution)
+

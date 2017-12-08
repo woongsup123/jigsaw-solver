@@ -4,6 +4,7 @@ from node import Node
 from operator import itemgetter
 from PIL import Image
 
+
 def crop(img):
     width, height = img.size
 
@@ -118,6 +119,64 @@ def merge_pieces(final_pieces):
     final_image.save("results/final_img.jpg")
 
 
+def locateNE(piece):
+        sum = 0
+        while piece.get_direction_at(0) != -1 and piece.get_direction_at(1) != -1:
+            piece.rotate_once()
+            sum += 1
+        piece.set_rotate_sum(sum)
+
+def locateNW(piece):
+        sum = 0
+        while piece.get_direction_at(1) != -1 and piece.get_direction_at(2) != -1:
+            piece.rotate_once()
+            sum += 1
+        piece.set_rotate_sum(sum)
+
+def locateSouth(piece):
+        sum = 0
+        while piece.get_direction_at(0) != -1:
+            piece.rotate_once()
+            sum += 1
+        piece.set_rotate_sum(sum)
+
+
+def locateTop(piece, top_piece_indices):
+    for i in range(len(piece.get_directions())):
+        if piece.get_direction_at(i) == top_piece_indices[1]:
+            if piece.get_direction_at((i+3)%4) != -1:
+                locateNE(piece)
+                piece.set_NE_True()
+            else:
+                locateNW(piece)
+                piece.set_NW_True()
+            break
+        elif piece.get_direction_at(i) == top_piece_indices[0]:
+            if piece.get_direction_at((i+3)%4) != -1:
+                locateNE(piece)
+                piece.set_NE_True()
+            else:
+                locateNW(piece)
+                piece.set_NW_True()
+            break
+
+def locateBottom(piece, bottom_piece_indices, top_piece_indices, piece1, piece2):
+    for i in range(len(piece.get_directions())):
+        if piece.get_direction_at(i) == top_piece_indices[0]:
+            if piece1.is_NE():
+                locateSouth(piece)
+                piece.set_SE_True()
+            else:
+                locateSouth(piece)
+                piece.set_SW_True()
+        elif piece.get_direction_at(i) == top_piece_indices[1]:
+            if piece2.is_NE():
+                locateSouth(piece)
+                piece.set_SE_True()
+            else:
+                locateSouth(piece)
+                piece.set_SW_True()
+
 def combine(pieces, solution):
 
     linked_list = list()
@@ -129,25 +188,33 @@ def combine(pieces, solution):
         linked_list[pair[0]].set_connection(pair[1], pair[2])
         linked_list[pair[2]].set_connection(pair[3], pair[0])
 
+    top_piece_indices = []
+    bottom_piece_indices = []
+
     for i in range(4):
-        print(linked_list[i].print_node())
-        print(linked_list[i].get_num_of_connected_edges())
-    '''
-    piece1_index = solution[0][0]
-    piece1_angle = solution[0][1]
-    piece2_index = solution[0][2]
-    piece2_angle = solution[0][3]
-    piece3_index = solution[0][0]
-    piece3_angle = solution[0][1]
-    piece4_index = solution[0][2]
-    piece4_angle = solution[0][3]
+        if linked_list[i].get_num_of_connected_edges() == 2:
+            top_piece_indices.append(i)
+        else:
+            bottom_piece_indices.append(i)
 
-    piece1 = pieces[piece1_index].rotate((1-piece1_angle)*270)
-    piece2 = pieces[piece2_index].rotate((3-piece2_angle)*270)
-    piece3 = []
-    piece4 = []
+    piece1 = linked_list[top_piece_indices[0]]
+    piece2 = linked_list[top_piece_indices[1]]
 
+    locateTop(piece1, top_piece_indices)
+    locateTop(piece2, top_piece_indices)
 
-    final_pieces = [piece1, piece2, piece3, piece4]
-    merge_pieces(final_pieces)
-    '''
+    piece3 = linked_list[bottom_piece_indices[0]]
+    piece4 = linked_list[bottom_piece_indices[1]]
+
+    locateBottom(piece3, bottom_piece_indices, top_piece_indices, piece1, piece2)
+    locateBottom(piece4, bottom_piece_indices, top_piece_indices, piece1, piece2)
+
+    print("============================================================")
+    print("Linked List Nodes to be implemented")
+    print("============================================================")
+    piece1.print_node()
+    piece2.print_node()
+    piece3.print_node()
+    piece4.print_node()
+
+    # merge_pieces function will be called in the end

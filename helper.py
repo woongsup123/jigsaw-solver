@@ -129,7 +129,9 @@ def combine(pieces, solution):
         linked_list[pair[0]].set_connection(pair[1], pair[2])
         linked_list[pair[2]].set_connection(pair[3], pair[0])
 
-    print(linked_list[1].print_node())
+    for i in range(4):
+        print(linked_list[i].print_node())
+        print(linked_list[i].get_num_of_connected_edges())
     '''
     piece1_index = solution[0][0]
     piece1_angle = solution[0][1]

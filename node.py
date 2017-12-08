@@ -32,6 +32,13 @@ class Node:
         sum = 0
         if self.get_north() != -1:
             sum += 1
+        if self.get_east() != -1:
+            sum += 1
+        if self.get_south() != -1:
+            sum += 1
+        if self.get_west() != -1:
+            sum += 1
+        return sum
 
     def set_north(self,north):
         self.north = north

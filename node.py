@@ -1,19 +1,14 @@
 class Node:
-    def __init__(self):
+    def __init__(self, node_number):
         self.rotate_sum = 0
         self.directions = [-1, -1, -1, -1]
-        self.NE = False
-        self.NW = False
-        self.SE = False
-        self.SW = False
+        self.location = [False, False, False, False] # NE, SE, SW, NW
+        self.node_number = node_number
 
     def print_node(self):
         print(self.directions)
         print(self.rotate_sum)
-        print(self.NE)
-        print(self.NW)
-        print(self.SE)
-        print(self.SW)
+        print(self.location)
 
     def get_direction_at(self, num):
         return self.directions[num]
@@ -31,23 +26,22 @@ class Node:
                 sum += 1
         return sum
 
-    def get_NE(self):
-        return self.NE
+    def get_location_index(self):
+        i = 0
+        while not self.location[i]:
+            i += 1
+        return i
 
-    def get_NW(self):
-        return self.NW
+    def get_node_number(self):
+        return self.node_number
+
 
     def is_NE(self):
-        if self.NE:
-            return True
-        else:
-            return False
+        return self.location[0]
 
     def is_NW(self):
-        if self.NW:
-            return True
-        else:
-            return False
+        return self.location[3]
+
 
     def set_north(self, north):
         self.directions[0] = north
@@ -61,27 +55,14 @@ class Node:
     def set_west(self,west):
         self.directions[3] = west
 
-    def set_NE_True(self):
-        self.NE = True
+    def set_location(self, index):
+        self.location[index] = True
 
-    def set_NW_True(self):
-        self.NW = True
-
-    def set_SE_True(self):
-        self.SE = True
-
-    def set_SW_True(self):
-        self.SW = True
-
-    def set_rotate_sum(self, num):
-        self.rotate_sum = num
+    def add_rotate_sum(self, num):
+        self.rotate_sum += num
 
     def rotate_once(self):
-        size = len(self.directions)
-        temp = self.directions[size-1]
-        for i in reversed(range(size-1)):
-            self.directions[i] = self.directions[i-1]
-        self.directions[0] = temp
+        self.directions = self.directions[-1:] + self.directions[:-1]
 
     def set_connection(self, direction, piece):
         if direction == 0:

@@ -3,7 +3,7 @@ from PIL import Image
 from piece import Piece
 import helper
 
-img = Image.open("pictures/sample_pic.jpg")
+img = Image.open("pictures/sample_pic_2.jpg")
 
 n = 0
 
@@ -30,7 +30,15 @@ for index in range(len(pieces)):
     edge2 = np_piece[:,height-1]
     edge3 = np_piece[width-1,:]
     edge4 = np_piece[:,0]
-
+    print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
+    print(type(edge1))
+    print(edge1)
+    print(type(edge2))
+    print(edge2)
+    print(type(edge3))
+    print(edge3)
+    print(type(edge4))
+    print(edge4)
     edges = [edge1, edge2, numpy.fliplr(edge3), edge4[::-1]]
     piece = Piece(edges)
 

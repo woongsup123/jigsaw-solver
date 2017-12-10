@@ -1,5 +1,8 @@
 import random
 import math
+
+import numpy
+
 from node import Node
 from operator import itemgetter
 from PIL import Image
@@ -29,7 +32,7 @@ def generate_pieces(img):
     rotate_shuffle(pieces) # rotate the pieces and shuffle the order randomly
 
     for index in range(len(pieces)):
-        pieces[index].save("pieces/piece_"+str(index)+".jpg") # save each piece as an image file
+        pieces[index].save("pieces/_piece_"+str(index)+".jpg") # save each piece as an image file
 
 
 def load_pieces():
@@ -84,6 +87,8 @@ def get_all_sorted_distances(np_pieces):
 
     return distances_all
 
+def takeSecond(elem):
+    return elem[1]
 
 def solve(piece_objects, all_sorted_distances):
     solution = []
@@ -97,6 +102,24 @@ def solve(piece_objects, all_sorted_distances):
 
         piece1 = piece_objects[pair[0]]
         piece2 = piece_objects[pair[2]]
+
+        if len(solution) == 1 and pair[0] not in pieces_used and pair[2] not in pieces_used:
+            long_piece1 = solution[0]
+
+            long_piece1_edge1 = numpy.append(piece_objects[long_piece1[2]].get_edge((long_piece1[3]+3)%4), piece_objects[long_piece1[0]].get_edge((long_piece1[1]+1)%4),axis=0)
+            long_piece1_edge2 = numpy.append(piece_objects[long_piece1[0]].get_edge((long_piece1[1]+3)%4), piece_objects[long_piece1[2]].get_edge((long_piece1[3]+1)%4),axis=0)
+            long_piece2 = (pair[0], pair[1], pair[2], pair[3])
+            long_piece2_edge1 = numpy.append(piece_objects[long_piece2[2]].get_edge((long_piece2[3]+3)%4), piece_objects[long_piece2[0]].get_edge((long_piece2[1]+1)%4),axis=0)
+            long_piece2_edge2 = numpy.append(piece_objects[long_piece2[0]].get_edge((long_piece2[1]+3)%4), piece_objects[long_piece2[2]].get_edge((long_piece2[3]+1)%4),axis=0)
+
+            sum_case1 = ((long_piece1[0], (long_piece1[1]+1)%4, long_piece2[2], (long_piece2[3]+3)%4), get_distance_between(long_piece1_edge1, long_piece2_edge1))
+            sum_case2 = ((long_piece1[0], (long_piece1[1]+1)%4, long_piece2[0], (long_piece2[1]+3)%4), get_distance_between(long_piece1_edge1, long_piece2_edge2))
+            sum_case3 = ((long_piece1[2], (long_piece1[3]+1)%4, long_piece2[2], (long_piece2[3]+3)%4), get_distance_between(long_piece1_edge2, long_piece2_edge1))
+            sum_case4 = ((long_piece1[2], (long_piece1[3]+1)%4, long_piece2[0], (long_piece2[1]+3)%4), get_distance_between(long_piece1_edge2, long_piece2_edge2))
+
+            sum_list = [sum_case1, sum_case2, sum_case3, sum_case4]
+            sum_list.sort(key=takeSecond)
+            return (long_piece1, long_piece2, sum_list[0][0])
 
         if len(solution) > 0 and ((pair[0], pair[1]) not in last_available_edges
                             and (pair[2], pair[3]) not in last_available_edges):
@@ -160,7 +183,7 @@ def merge_pieces(final_pieces):
     final_image.paste(final_pieces[1], (width, height))
     final_image.paste(final_pieces[2], (0, height))
     final_image.paste(final_pieces[3], (0, 0))
-    final_image.save("results/final_img.jpg")
+    final_image.save("results/final_img_.jpg")
 
 
 def locate_top_piece_at(piece, index):

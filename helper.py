@@ -27,18 +27,18 @@ def rotate_shuffle(pieces):
         random.shuffle(pieces)
 
 
-def generate_pieces(img):
+def generate_pieces(img, file):
     pieces = crop(img) # crop and divide the image into 4 pieces
     rotate_shuffle(pieces) # rotate the pieces and shuffle the order randomly
 
     for index in range(len(pieces)):
-        pieces[index].save("pieces/piece_"+str(index)+".jpg") # save each piece as an image file
+        pieces[index].save("pieces/"+file+"/piece_"+str(index)+".jpg") # save each piece as an image file
 
 
-def load_pieces():
+def load_pieces(file):
     pieces = []
     for index in range(0, 4):
-        pieces.append(Image.open("pieces/piece_"+str(index)+".jpg"))
+        pieces.append(Image.open("pieces/"+file+"/piece_"+str(index)+".jpg"))
     return pieces
 
 
@@ -171,19 +171,17 @@ def solve(piece_objects, all_sorted_distances):
 
         solution.append((pair[0], pair[1], pair[2], pair[3]))
 
-    print("PIECES USED!!!")
-    print(pieces_used)
     return solution
 
 
-def merge_pieces(final_pieces):
+def merge_pieces(final_pieces, file):
     width, height = final_pieces[0].size
     final_image = Image.new('RGB', (width*2, height*2))
     final_image.paste(final_pieces[0],(width, 0))
     final_image.paste(final_pieces[1], (width, height))
     final_image.paste(final_pieces[2], (0, height))
     final_image.paste(final_pieces[3], (0, 0))
-    final_image.save("results/final_img.jpg")
+    final_image.save("results/final_img_"+file+".jpg")
 
 
 def locate_top_piece_at(piece, index):
@@ -238,7 +236,7 @@ def locateBottom(piece, bottom_piece_indices, top_piece_indices, piece1, piece2)
                 piece.set_location(2) # 2 refers to SW
 
 
-def combine(pieces, solution):
+def combine(pieces, solution, file):
 
     linked_list = list()
 
@@ -264,54 +262,19 @@ def combine(pieces, solution):
     locateTop(piece1, top_piece_indices)
     locateTop(piece2, top_piece_indices)
 
-
     piece3 = linked_list[bottom_piece_indices[0]]
     piece4 = linked_list[bottom_piece_indices[1]]
 
     locateBottom(piece3, bottom_piece_indices, top_piece_indices, piece1, piece2)
     locateBottom(piece4, bottom_piece_indices, top_piece_indices, piece1, piece2)
 
-    print("============================")
-    piece1.print_node()
-    piece2.print_node()
-    piece3.print_node()
-    piece4.print_node()
-    print("============================")
     # finally, put the pieces together
     pieces_in_order = [None] * 4
     pieces_in_order[piece1.get_location_index()] = pieces[top_piece_indices[0]].rotate(270*piece1.get_rotate_sum())
-    print(str(top_piece_indices[0]))
-    print(str(piece1.get_location_index()))
-    print("===============")
     pieces_in_order[piece2.get_location_index()] = pieces[top_piece_indices[1]].rotate(270*piece2.get_rotate_sum())
-    print(str(top_piece_indices[1]))
-    print(str(piece2.get_location_index()))
-    print("===============")
     pieces_in_order[piece3.get_location_index()] = pieces[bottom_piece_indices[0]].rotate(270*piece3.get_rotate_sum())
-    print(str(bottom_piece_indices[0]))
-    print(str(piece3.get_location_index()))
-    print("===============")
     pieces_in_order[piece4.get_location_index()] = pieces[bottom_piece_indices[1]].rotate(270*piece4.get_rotate_sum())
-    print(str(bottom_piece_indices[1]))
-    print(str(piece4.get_location_index()))
-    print("===============")
-    merge_pieces(pieces_in_order)
 
-    print("============================================================")
-    print("Linked List Nodes to be implemented")
-    print("============================================================")
-
-    print("Index number [" + str(top_piece_indices[0]) + "]")
-    piece1.print_node()
-    print("\n")
-    print("Index number [" + str(top_piece_indices[1]) + "]")
-    piece2.print_node()
-    print("\n")
-    print("Index number [" + str(bottom_piece_indices[0]) + "]")
-    piece3.print_node()
-    print("\n")
-    print("Index number [" + str(bottom_piece_indices[1]) + "]")
-    piece4.print_node()
-    print("\n")
+    merge_pieces(pieces_in_order, file)
 
     # merge_pieces function will be called in the end

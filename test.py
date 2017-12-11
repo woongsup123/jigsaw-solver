@@ -21,32 +21,24 @@ print(arr2)
 print(np.append(arr1, arr2, axis=0))
 '''
 
-pieces = helper.load_pieces()
-
-piece_objects = []
-
-for index in range(len(pieces)):
-
-    width, height = pieces[index].size
-
-    np_piece = np.array(pieces[index], dtype='int64')
+arr = [[1, 2, 4, 1, 5], [6, 0, 0, 0, 2], [0, 0, 0, 1, 0] , [9, 3, 0, 1, 0] , [8, 7, 2, 1, 3]]
+width, height = arr.size
+np_piece = np.array(arr, dtype='int64')
     # define each piece as a Piece object2
     # Piece object consists of four edges
-    edge1 = np_piece[0,:]
-    edge2 = np_piece[:,height-1]
-    edge3 = np_piece[width-1,:]
-    edge4 = np_piece[:,0]
-    long_edge1 = np_piece[:,]
-    print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-    print(type(edge1))
-    print(edge1)
-    print(type(edge2))
-    print(edge2)
-    print(type(edge3))
-    print(edge3)
-    print(type(edge4))
-    print(edge4)
-    edges = [edge1, edge2, np.fliplr(edge3), edge4[::-1]]
+edge1 = np_piece[0,:]
+edge2 = np_piece[:,height-1]
+edge3 = np_piece[width-1,:]
+edge4 = np_piece[:,0]
+long_edge1 = np_piece[:,]
 
-
-    piece_objects.append(piece) # add each piece object into the array
+edges = [edge1, edge2, edge3[::-1], edge4[::-1]]
+print("==============")
+print(edges[0])
+print("==============")
+print(edges[0])
+print("==============")
+print(edges[0])
+print("==============")
+print(edges[0])
+# add each piece object into the array

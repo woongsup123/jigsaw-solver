@@ -32,13 +32,13 @@ def generate_pieces(img):
     rotate_shuffle(pieces) # rotate the pieces and shuffle the order randomly
 
     for index in range(len(pieces)):
-        pieces[index].save("pieces/_piece_"+str(index)+".jpg") # save each piece as an image file
+        pieces[index].save("pieces/piece_"+str(index)+".jpg") # save each piece as an image file
 
 
 def load_pieces():
     pieces = []
     for index in range(0, 4):
-        pieces.append(Image.open("pieces/_piece_"+str(index)+".jpg"))
+        pieces.append(Image.open("pieces/piece_"+str(index)+".jpg"))
     return pieces
 
 
@@ -183,7 +183,7 @@ def merge_pieces(final_pieces):
     final_image.paste(final_pieces[1], (width, height))
     final_image.paste(final_pieces[2], (0, height))
     final_image.paste(final_pieces[3], (0, 0))
-    final_image.save("results/_final_img.jpg")
+    final_image.save("results/final_img.jpg")
 
 
 def locate_top_piece_at(piece, index):

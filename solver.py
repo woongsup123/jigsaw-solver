@@ -30,16 +30,7 @@ for index in range(len(pieces)):
     edge2 = np_piece[:,height-1]
     edge3 = np_piece[width-1,:]
     edge4 = np_piece[:,0]
-    print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^")
-    print(type(edge1))
-    print(edge1)
-    print(type(edge2))
-    print(edge2)
-    print(type(edge3))
-    print(edge3)
-    print(type(edge4))
-    print(edge4)
-    edges = [edge1, edge2, numpy.fliplr(edge3), edge4[::-1]]
+    edges = [edge1, edge2, edge3[::-1], edge4[::-1]]
     piece = Piece(edges)
 
     piece_objects.append(piece) # add each piece object into the array

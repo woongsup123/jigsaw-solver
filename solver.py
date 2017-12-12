@@ -8,7 +8,7 @@ filenames = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 for i in range(len(filenames)):
     img = Image.open("pictures/"+filenames[i]+".jpg")
 
-    generated_pieces = helper.generate_pieces(img, filenames[i]) # crops and shuffles the pieces randomly
+    generated_pieces = helper.generate_pieces(img) # crops and shuffles the pieces randomly
 
     for index in range(len(generated_pieces)):
         generated_pieces[index].save("pieces/"+filenames[i]+"/piece_"+str(index)+".jpg") # save each piece as an image file

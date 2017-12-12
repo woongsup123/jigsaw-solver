@@ -3,7 +3,7 @@ from PIL import Image
 from piece import Piece
 import helper
 
-filenames = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11"]
+filenames = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
 
 for i in range(len(filenames)):
     img = Image.open("pictures/"+filenames[i]+".jpg")

@@ -13,8 +13,8 @@ def crop(img):
 
     img1 = img.crop((0, 0, width/2, height/2))
     img2 = img.crop((width/2, 0, width, height/2))
-    img3 = img.crop((0, height/2, width/2, height))
-    img4 = img.crop((width/2, height/2, width, height))
+    img3 = img.crop((width/2, height/2, width, height))
+    img4 = img.crop((0, height/2, width/2, height))
 
     return [img1, img2, img3, img4]
 
@@ -24,7 +24,7 @@ def rotate_shuffle(pieces):
     new_pieces = []
     for piece in pieces:
         angle = random.choice([0, 90, 180, 270])
-        piece = piece.rotate(angle)
+        piece = piece.rotate(angle, expand = True)
         new_pieces.append(piece)
 
     random.shuffle(new_pieces)
@@ -40,9 +40,9 @@ def generate_pieces(img):
 def get_distance_between (edge1, edge2):
 
     if len(edge1) != len(edge2):
-        print("[Error] lengths of the edges are not equal")
-    distance = 0
+        return 9999999999
 
+    distance = 0
     length = len(edge1)
     for index in range(length):
         distance += math.sqrt( (edge1[index][0] - edge2[length-index-1][0]) ** 2 +
@@ -266,10 +266,10 @@ def combine(pieces, solution):
 
     # finally, put the pieces together
     pieces_in_order = [None] * 4
-    pieces_in_order[piece1.get_location_index()] = pieces[top_piece_indices[0]].rotate(270*piece1.get_rotate_sum())
-    pieces_in_order[piece2.get_location_index()] = pieces[top_piece_indices[1]].rotate(270*piece2.get_rotate_sum())
-    pieces_in_order[piece3.get_location_index()] = pieces[bottom_piece_indices[0]].rotate(270*piece3.get_rotate_sum())
-    pieces_in_order[piece4.get_location_index()] = pieces[bottom_piece_indices[1]].rotate(270*piece4.get_rotate_sum())
+    pieces_in_order[piece1.get_location_index()] = pieces[top_piece_indices[0]].rotate(270*piece1.get_rotate_sum(), expand = True)
+    pieces_in_order[piece2.get_location_index()] = pieces[top_piece_indices[1]].rotate(270*piece2.get_rotate_sum(), expand = True)
+    pieces_in_order[piece3.get_location_index()] = pieces[bottom_piece_indices[0]].rotate(270*piece3.get_rotate_sum(), expand = True)
+    pieces_in_order[piece4.get_location_index()] = pieces[bottom_piece_indices[1]].rotate(270*piece4.get_rotate_sum(), expand = True)
 
     return merge_pieces(pieces_in_order)
 

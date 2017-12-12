@@ -30,15 +30,6 @@ def rotate_shuffle(pieces):
 def generate_pieces(img, file):
     pieces = crop(img) # crop and divide the image into 4 pieces
     rotate_shuffle(pieces) # rotate the pieces and shuffle the order randomly
-
-    for index in range(len(pieces)):
-        pieces[index].save("pieces/"+file+"/piece_"+str(index)+".jpg") # save each piece as an image file
-
-
-def load_pieces(file):
-    pieces = []
-    for index in range(0, 4):
-        pieces.append(Image.open("pieces/"+file+"/piece_"+str(index)+".jpg"))
     return pieces
 
 
@@ -59,6 +50,7 @@ def get_distance_between (edge1, edge2):
 
 def get_distances(n, np_pieces): # for the chosen piece
     collection_of_distances = []
+    distance = 0
     for i in range(len(np_pieces)): # for each edge of the chosen piece
 
         for j in range(len(np_pieces)): # compare it with edges of some other piece
@@ -67,7 +59,10 @@ def get_distances(n, np_pieces): # for the chosen piece
                 continue
 
             for k in range(len(np_pieces)): # with the edge k of some other piece j
-                distance = get_distance_between(np_pieces[n].get_edge(i), np_pieces[j].get_edge(k))
+                if len(np_pieces[n].get_edge(i)) != len(np_pieces[j].get_edge(k)):
+                    distance = 9999999999
+                else:
+                    distance = get_distance_between(np_pieces[n].get_edge(i), np_pieces[j].get_edge(k))
                 collection_of_distances.append((n, i, j, k, distance)) # piece j, edge k, distance value
 
     return collection_of_distances
@@ -84,7 +79,6 @@ def get_all_sorted_distances(np_pieces):
                 distances_all.append(distance)
 
     distances_all = sorted(distances_all, key=itemgetter(4))
-
     return distances_all
 
 def takeSecond(elem):
@@ -174,14 +168,15 @@ def solve(piece_objects, all_sorted_distances):
     return solution
 
 
-def merge_pieces(final_pieces, file):
+def merge_pieces(final_pieces):
     width, height = final_pieces[0].size
     final_image = Image.new('RGB', (width*2, height*2))
     final_image.paste(final_pieces[0],(width, 0))
     final_image.paste(final_pieces[1], (width, height))
     final_image.paste(final_pieces[2], (0, height))
     final_image.paste(final_pieces[3], (0, 0))
-    final_image.save("results/final_img_"+file+".jpg")
+    return final_image
+
 
 
 def locate_top_piece_at(piece, index):
@@ -275,6 +270,6 @@ def combine(pieces, solution, file):
     pieces_in_order[piece3.get_location_index()] = pieces[bottom_piece_indices[0]].rotate(270*piece3.get_rotate_sum())
     pieces_in_order[piece4.get_location_index()] = pieces[bottom_piece_indices[1]].rotate(270*piece4.get_rotate_sum())
 
-    merge_pieces(pieces_in_order, file)
+    return merge_pieces(pieces_in_order)
 
     # merge_pieces function will be called in the end

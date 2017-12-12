@@ -3,14 +3,19 @@ from PIL import Image
 from piece import Piece
 import helper
 
-filenames = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+filenames = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 
-for file in filenames:
-    img = Image.open("pictures/"+file+".jpg")
+for i in range(len(filenames)):
+    img = Image.open("pictures/"+filenames[i]+".jpg")
 
-    helper.generate_pieces(img, file) # crops and shuffles the pieces randomly
+    generated_pieces = helper.generate_pieces(img, filenames[i]) # crops and shuffles the pieces randomly
 
-    pieces = helper.load_pieces(file)
+    for index in range(len(generated_pieces)):
+        generated_pieces[index].save("pieces/"+filenames[i]+"/piece_"+str(index)+".jpg") # save each piece as an image file
+
+    pieces = []
+    for index in range(len(generated_pieces)):
+        pieces.append(Image.open("pieces/"+filenames[i]+"/piece_"+str(index)+".jpg"))
 
     piece_objects = []
 
@@ -22,8 +27,8 @@ for file in filenames:
         # define each piece as a Piece object2
         # Piece object consists of four edges
         edge1 = np_piece[0,:]
-        edge2 = np_piece[:,height-1]
-        edge3 = np_piece[width-1,:]
+        edge2 = np_piece[:,width-1]
+        edge3 = np_piece[height-1,:]
         edge4 = np_piece[:,0]
         edges = [edge1, edge2, edge3[::-1], edge4[::-1]]
         piece = Piece(edges)
@@ -32,5 +37,6 @@ for file in filenames:
 
     all_sorted_distances = helper.get_all_sorted_distances(piece_objects)
     solution = helper.solve(piece_objects, all_sorted_distances)
-    helper.combine(pieces, solution, file)
-
+    final_image = helper.combine(pieces, solution, filenames[i])
+    final_image.save("results/final_img_"+filenames[i]+".jpg")
+    print(filenames[i] + " Complete")

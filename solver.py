@@ -37,6 +37,6 @@ for i in range(len(filenames)):
 
     all_sorted_distances = helper.get_all_sorted_distances(piece_objects)
     solution = helper.solve(piece_objects, all_sorted_distances)
-    final_image = helper.combine(pieces, solution, filenames[i])
+    final_image = helper.combine(pieces, solution)
     final_image.save("results/final_img_"+filenames[i]+".jpg")
     print(filenames[i] + " Complete")

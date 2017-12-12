@@ -98,9 +98,6 @@ def solve(piece_objects, all_sorted_distances):
         pair = all_sorted_distances[index]
         index += 1
 
-        piece1 = piece_objects[pair[0]]
-        piece2 = piece_objects[pair[2]]
-
         if len(solution) == 1 and pair[0] not in pieces_used and pair[2] not in pieces_used:
             long_piece1 = solution[0]
 
@@ -235,7 +232,7 @@ def locateBottom(piece, bottom_piece_indices, top_piece_indices, piece1, piece2)
                 piece.set_location(2) # 2 refers to SW
 
 
-def combine(pieces, solution, file):
+def combine(pieces, solution):
 
     linked_list = list()
 

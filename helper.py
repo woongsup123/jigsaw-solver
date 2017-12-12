@@ -21,16 +21,20 @@ def crop(img):
 
 def rotate_shuffle(pieces):
     #rotate randomly
+    new_pieces = []
     for piece in pieces:
         angle = random.choice([0, 90, 180, 270])
-        piece.rotate(angle)
-        random.shuffle(pieces)
+        piece = piece.rotate(angle)
+        new_pieces.append(piece)
+
+    random.shuffle(new_pieces)
+
+    return new_pieces
 
 
-def generate_pieces(img, file):
+def generate_pieces(img):
     pieces = crop(img) # crop and divide the image into 4 pieces
-    rotate_shuffle(pieces) # rotate the pieces and shuffle the order randomly
-    return pieces
+    return rotate_shuffle(pieces) # rotate the pieces and shuffle the order randomly
 
 
 def get_distance_between (edge1, edge2):
@@ -174,7 +178,7 @@ def merge_pieces(final_pieces):
     final_image.paste(final_pieces[0],(width, 0))
     final_image.paste(final_pieces[1], (width, height))
     final_image.paste(final_pieces[2], (0, height))
-    final_image.paste(final_pieces[3], (0, 0))
+    final_image.paste(final_pieces[3])
     return final_image
 
 
